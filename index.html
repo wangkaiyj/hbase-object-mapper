@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Hbase Object Mapper by flipkart-incubator</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Hbase Object Mapper</h1>
+        <h2> A Java-annotation based object mapper that helps convert your bean-like objects to HBase row data (and vice-versa). For use in Map/Reduce jobs involving HBase tables (and their unit tests). Helps define Data Access Objects for HBase entities.</h2>
+        <a href="https://github.com/flipkart-incubator/hbase-object-mapper" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="hbase-object-mapper" class="anchor" href="#hbase-object-mapper" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>HBase Object Mapper</h1>
+
+<h2>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction</h2>
+
+<p>This compact utility library is an annotation based <em>object mapper</em> for HBase (written in Java) that helps you:</p>
+
+<ul>
+<li>convert your bean-like objects to HBase rows and vice-versa (for use in MapReduce jobs on HBase tables and their unit-tests)</li>
+<li>define <em>data access objects</em> for entities that map to HBase rows (for random single/range/bulk access of rows of an HBase table)</li>
+</ul>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Let's say you've an HBase table <code>citizens</code> with row-key format <code>country_code#UID</code>. Let's say your table is created with two column families <code>main</code> and <code>optional</code> which may have columns like <code>uid</code>, <code>name</code>, <code>salary</code> etc.</p>
+
+<p>This library enables to you represent your HBase row as a class like below:</p>
+
+<div class="highlight highlight-source-java"><pre>@HBTable(<span class="pl-s"><span class="pl-pds">"</span>citizens<span class="pl-pds">"</span></span>)
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Citizen</span> <span class="pl-k">implements</span> <span class="pl-e">HBRecord</span> {
+    <span class="pl-k">@HBRowKey</span>
+    <span class="pl-k">private</span> <span class="pl-smi">String</span> countryCode;
+    <span class="pl-k">@HBRowKey</span>
+    <span class="pl-k">private</span> <span class="pl-smi">Integer</span> uid;
+    <span class="pl-k">@HBColumn</span>(<span class="pl-c1">family</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>main<span class="pl-pds">"</span></span>, <span class="pl-c1">column</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>)
+    <span class="pl-k">private</span> <span class="pl-smi">String</span> name;
+    <span class="pl-k">@HBColumn</span>(<span class="pl-c1">family</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>optional<span class="pl-pds">"</span></span>, <span class="pl-c1">column</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>age<span class="pl-pds">"</span></span>)
+    <span class="pl-k">private</span> <span class="pl-smi">Short</span> age;
+    <span class="pl-k">@HBColumn</span>(<span class="pl-c1">family</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>optional<span class="pl-pds">"</span></span>, <span class="pl-c1">column</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>salary<span class="pl-pds">"</span></span>)
+    <span class="pl-k">private</span> <span class="pl-smi">Integer</span> sal;
+    <span class="pl-k">@HBColumn</span>(<span class="pl-c1">family</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>optional<span class="pl-pds">"</span></span>, <span class="pl-c1">column</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>flags<span class="pl-pds">"</span></span>)
+    <span class="pl-k">private</span> <span class="pl-k">Map&lt;<span class="pl-smi">String</span>, <span class="pl-smi">Integer</span>&gt;</span> extraFlags;
+    <span class="pl-k">@HBColumn</span>(<span class="pl-c1">family</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>optional<span class="pl-pds">"</span></span>, <span class="pl-c1">column</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>dependents<span class="pl-pds">"</span></span>)
+    <span class="pl-k">private</span> <span class="pl-smi">Dependents</span> dependents;
+    <span class="pl-k">@HBColumnMultiVersion</span>(<span class="pl-c1">family</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>optional<span class="pl-pds">"</span></span>, <span class="pl-c1">column</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>phone_number<span class="pl-pds">"</span></span>)
+    <span class="pl-k">private</span> <span class="pl-k">NavigableMap&lt;<span class="pl-smi">Long</span>, <span class="pl-smi">Integer</span>&gt;</span> phoneNumber; <span class="pl-c">// Multi-versioned column. This annotation enables you to fetch multiple versions of column values</span>
+
+    <span class="pl-k">public</span> <span class="pl-smi">String</span> <span class="pl-en">composeRowKey</span>() {
+        <span class="pl-k">return</span> <span class="pl-smi">String</span><span class="pl-k">.</span>format(<span class="pl-s"><span class="pl-pds">"</span>%s#%d<span class="pl-pds">"</span></span>, countryCode, uid);
+    }
+
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">parseRowKey</span>(<span class="pl-smi">String</span> <span class="pl-v">rowKey</span>) {
+        <span class="pl-k">String</span>[] pieces <span class="pl-k">=</span> rowKey<span class="pl-k">.</span>split(<span class="pl-s"><span class="pl-pds">"</span>#<span class="pl-pds">"</span></span>);
+        <span class="pl-v">this</span><span class="pl-k">.</span>countryCode <span class="pl-k">=</span> pieces[<span class="pl-c1">0</span>];
+        <span class="pl-v">this</span><span class="pl-k">.</span>uid <span class="pl-k">=</span> <span class="pl-smi">Integer</span><span class="pl-k">.</span>parseInt(pieces[<span class="pl-c1">1</span>]);
+    }
+} </pre></div>
+
+<p>(see <a href="./src/test/java/com/flipkart/hbaseobjectmapper/entities/Citizen.java">Citizen.java</a> for a detailed example with more data types)</p>
+
+<p>Now, for above definition of your <code>Citizen</code> class,</p>
+
+<ul>
+<li>you can use methods in <code>HBObjectMapper</code> class to convert <code>Citizen</code> objects to HBase's <code>Put</code> and <code>Result</code> objects and vice-versa</li>
+<li>you can inherit from class <code>AbstractHBDAO</code> that contains methods like <code>get</code> (for random single/bulk/range access of rows), <code>persist</code> (for writing rows) and <code>delete</code> (for deleting rows)</li>
+</ul>
+
+<h2>
+<a id="mapreduce-use-cases" class="anchor" href="#mapreduce-use-cases" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>MapReduce use-cases</h2>
+
+<h3>
+<a id="use-in-map" class="anchor" href="#use-in-map" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Use in <code>map()</code>
+</h3>
+
+<p>HBase's <code>Result</code> object can be converted to your bean-like object using below method: </p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">&lt;</span><span class="pl-smi">T</span> extends <span class="pl-smi">HBRecord</span><span class="pl-k">&gt;</span> <span class="pl-smi">T</span> readValue(<span class="pl-smi">ImmutableBytesWritable</span> rowKey, <span class="pl-smi">Result</span> result, <span class="pl-k">Class&lt;<span class="pl-smi">T</span>&gt;</span> clazz)</pre></div>
+
+<p>For example:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">Citizen</span> e <span class="pl-k">=</span> hbObjectMapper<span class="pl-k">.</span>readValue(key, value, <span class="pl-smi">Citizen</span><span class="pl-k">.</span>class);</pre></div>
+
+<p>See file <a href="./src/test/java/com/flipkart/hbaseobjectmapper/mr/samples/CitizenMapper.java">CitizenMapper.java</a> for full sample code.</p>
+
+<h3>
+<a id="use-in-reduce" class="anchor" href="#use-in-reduce" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Use in <code>reduce()</code>
+</h3>
+
+<p>Your bean-like object can be converted to HBase's <code>Put</code> (for row contents) and <code>ImmutableBytesWritable</code> (for row key) using below methods:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">ImmutableBytesWritable</span> getRowKey(<span class="pl-smi">HBRecord</span> obj)</pre></div>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">Put</span> writeValueAsPut(<span class="pl-smi">HBRecord</span> obj)</pre></div>
+
+<p>For example, below code in reducer writes your object as one HBase row with appropriate column families and columns:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">Citizen</span> citizen <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Citizen</span>(<span class="pl-c">/*details*/</span>);
+context<span class="pl-k">.</span>write(hbObjectMapper<span class="pl-k">.</span>getRowKey(citizen), hbObjectMapper<span class="pl-k">.</span>writeValueAsPut(citizen));</pre></div>
+
+<p>See file <a href="./src/test/java/com/flipkart/hbaseobjectmapper/mr/samples/CitizenReducer.java">CitizenReducer.java</a> for full sample code.</p>
+
+<h3>
+<a id="unit-test-for-map" class="anchor" href="#unit-test-for-map" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Unit-test for <code>map()</code>
+</h3>
+
+<p>Your bean-like object can be converted to HBase's <code>Put</code> (for row contents) and <code>ImmutableBytesWritable</code> (for row key) using below methods:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">ImmutableBytesWritable</span> getRowKey(<span class="pl-smi">HBRecord</span> obj)</pre></div>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">Result</span> writeValueAsResult(<span class="pl-smi">HBRecord</span> obj)</pre></div>
+
+<p>Below is an example of unit-test of a mapper using <a href="https://mrunit.apache.org/">MRUnit</a>:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">Citizen</span> citizen <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Citizen</span>(<span class="pl-c">/*params*/</span>);
+mapDriver
+    .withInput(
+            hbObjectMapper<span class="pl-k">.</span>getRowKey(citizen),
+            hbObjectMapper<span class="pl-k">.</span>writeValueAsResult(citizen)
+    )
+    .withOutput(<span class="pl-smi">Util</span><span class="pl-k">.</span>strToIbw(<span class="pl-s"><span class="pl-pds">"</span>key<span class="pl-pds">"</span></span>), <span class="pl-k">new</span> <span class="pl-smi">IntWritable</span>(citizen<span class="pl-k">.</span>getAge()))
+    .runTest();</pre></div>
+
+<p>See file <a href="./src/test/java/com/flipkart/hbaseobjectmapper/mr/TestCitizenMapper.java">TestCitizenMapper.java</a> for full sample code.</p>
+
+<h3>
+<a id="unit-test-for-reduce" class="anchor" href="#unit-test-for-reduce" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Unit-test for <code>reduce()</code>
+</h3>
+
+<p>HBase's <code>Put</code> object can be converted to your bean-like object using below method:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">&lt;</span><span class="pl-smi">T</span> extends <span class="pl-smi">HBRecord</span><span class="pl-k">&gt;</span> <span class="pl-smi">T</span> readValue(<span class="pl-smi">ImmutableBytesWritable</span> rowKeyBytes, <span class="pl-smi">Put</span> put, <span class="pl-k">Class&lt;<span class="pl-smi">T</span>&gt;</span> clazz)</pre></div>
+
+<p>Below is an example of unit-test of a reducer using <a href="https://mrunit.apache.org/">MRUnit</a>:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">Pair&lt;<span class="pl-smi">ImmutableBytesWritable</span>, <span class="pl-smi">Writable</span>&gt;</span> reducerResult <span class="pl-k">=</span> reducerDriver<span class="pl-k">.</span>withInput(<span class="pl-smi">Util</span><span class="pl-k">.</span>strToIbw(<span class="pl-s"><span class="pl-pds">"</span>key<span class="pl-pds">"</span></span>), <span class="pl-smi">Arrays</span><span class="pl-k">.</span>asList(<span class="pl-k">new</span> <span class="pl-smi">IntWritable</span>(<span class="pl-c1">1</span>), <span class="pl-k">new</span> <span class="pl-smi">IntWritable</span>(<span class="pl-c1">5</span>)))<span class="pl-k">.</span>run()<span class="pl-k">.</span>get(<span class="pl-c1">0</span>);
+<span class="pl-smi">Citizen</span> citizen <span class="pl-k">=</span> hbObjectMapper<span class="pl-k">.</span>readValue(reducerResult<span class="pl-k">.</span>getFirst(), (<span class="pl-smi">Put</span>) reducerResult<span class="pl-k">.</span>getSecond(), <span class="pl-smi">Citizen</span><span class="pl-k">.</span>class);</pre></div>
+
+<p>See file <a href="./src/test/java/com/flipkart/hbaseobjectmapper/mr/TestCitizenReducer.java">TestCitizenReducer.java</a> for full sample code that unit-tests a reducer using <a href="https://mrunit.apache.org/">MRUnit</a></p>
+
+<h2>
+<a id="hbase-orm" class="anchor" href="#hbase-orm" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>HBase ORM</h2>
+
+<p>Since we're dealing with HBase (and not an OLTP system), fitting an ORM paradigm may not make sense. So, this library doesn't intend to evolve as a full-fledged ORM.</p>
+
+<p>This library provides an abstract class to define your own <em>data access object</em>. For example you can create a <em>data access object</em> for <code>Citizen</code> class in the above example as follows:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">import</span> <span class="pl-smi">org.apache.hadoop.conf.Configuration</span>;
+
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">CitizenDAO</span> <span class="pl-k">extends</span> <span class="pl-e">AbstractHBDAO&lt;<span class="pl-smi">Citizen</span>&gt;</span> {
+
+    <span class="pl-k">public</span> <span class="pl-en">CitizenDAO</span>(<span class="pl-smi">Configuration</span> <span class="pl-v">conf</span>) <span class="pl-k">throws</span> <span class="pl-smi">IOException</span> {
+        <span class="pl-v">super</span>(conf);
+    }
+}</pre></div>
+
+<p>(see <a href="./src/test/java/com/flipkart/hbaseobjectmapper/daos/CitizenDAO.java">CitizenDAO.java</a>)</p>
+
+<p>Once defined, you can access, manipulate and persist a row of <code>citizens</code> HBase table as below:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">Configuration</span> configuration <span class="pl-k">=</span> getConf(); <span class="pl-c">// this is org.apache.hadoop.conf.Configuration</span>
+
+<span class="pl-c">// Create a data access object:</span>
+<span class="pl-smi">CitizenDAO</span> citizenDao <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">CitizenDAO</span>(configuration);
+
+<span class="pl-c">// Fetch a row from "citizens" HBase table with row key "IND#1":</span>
+<span class="pl-smi">Citizen</span> pe <span class="pl-k">=</span> citizenDao<span class="pl-k">.</span>get(<span class="pl-s"><span class="pl-pds">"</span>IND#1<span class="pl-pds">"</span></span>);
+
+<span class="pl-k">Citizen</span>[] ape <span class="pl-k">=</span> citizenDao<span class="pl-k">.</span>get(<span class="pl-k">new</span> <span class="pl-smi">String</span>[] {<span class="pl-s"><span class="pl-pds">"</span>IND#1<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>IND#2<span class="pl-pds">"</span></span>}); <span class="pl-c">//bulk get</span>
+
+<span class="pl-c">// In below, note that "IND#1" is inclusive and "IND#5" is exclusive</span>
+<span class="pl-k">List&lt;<span class="pl-smi">Citizen</span>&gt;</span> lpe <span class="pl-k">=</span> citizenDao<span class="pl-k">.</span>get(<span class="pl-s"><span class="pl-pds">"</span>IND#1<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>IND#5<span class="pl-pds">"</span></span>); <span class="pl-c">//range get</span>
+
+<span class="pl-c">// for row keys in range ["IND#1", "IND#5"), fetch 3 versions of field 'phoneNumberHistory' </span>
+<span class="pl-k">NavigableMap&lt;<span class="pl-smi">String</span> /</span><span class="pl-k">*</span> row key <span class="pl-k">*/</span>, <span class="pl-k">NavigableMap&lt;<span class="pl-smi">Long</span> /</span><span class="pl-k">*</span> timestamp <span class="pl-k">*/</span>, <span class="pl-smi">Object</span> <span class="pl-c">/* column value */</span><span class="pl-k">&gt;&gt;</span> phoneNumberHistory 
+    <span class="pl-k">=</span> citizenDao<span class="pl-k">.</span>fetchFieldValues(<span class="pl-s"><span class="pl-pds">"</span>IND#1<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>IND#5<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>phoneNumberHistory<span class="pl-pds">"</span></span>, <span class="pl-c1">3</span>);
+<span class="pl-c">//(bulk variant of above range method is also available)</span>
+
+pe<span class="pl-k">.</span>setPincode(<span class="pl-c1">560034</span>); <span class="pl-c">// change a field</span>
+
+citizenDao<span class="pl-k">.</span>persist(pe); <span class="pl-c">// Save it back to HBase</span>
+
+citizenDao<span class="pl-k">.</span>delete(pe); <span class="pl-c">// Delete a row by it's object reference</span>
+
+citizenDao<span class="pl-k">.</span>delete(<span class="pl-s"><span class="pl-pds">"</span>IND#2<span class="pl-pds">"</span></span>); <span class="pl-c">// Delete a row by it's row key</span>
+<span class="pl-c">// (bulk variant of delete method is also available)</span>
+
+citizenDao<span class="pl-k">.</span>getHBaseTable() <span class="pl-c">// returns HTable instance (in case you want to directly play around) </span>
+</pre></div>
+
+<p>(see <a href="./src/test/java/com/flipkart/hbaseobjectmapper/TestsAbstractHBDAO.java">TestsAbstractHBDAO.java</a> for a more detailed example)</p>
+
+<h2>
+<a id="maven" class="anchor" href="#maven" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Maven</h2>
+
+<p>Add below entry within the <code>dependencies</code> section of your <code>pom.xml</code>:</p>
+
+<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">dependency</span>&gt;
+    &lt;<span class="pl-ent">groupId</span>&gt;com.flipkart&lt;/<span class="pl-ent">groupId</span>&gt;
+    &lt;<span class="pl-ent">artifactId</span>&gt;hbase-object-mapper&lt;/<span class="pl-ent">artifactId</span>&gt;
+    &lt;<span class="pl-ent">version</span>&gt;1.3&lt;/<span class="pl-ent">version</span>&gt;
+&lt;/<span class="pl-ent">dependency</span>&gt;</pre></div>
+
+<p>(See artifact details for com.flipkart:hbase-object-mapper:1.3 on <strong>Maven Central</strong>)</p>
+
+<h2>
+<a id="how-to-build" class="anchor" href="#how-to-build" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to build?</h2>
+
+<p>To build this project, follow below steps:</p>
+
+<ul>
+<li>Do a <code>git clone</code> of this repository</li>
+<li>Checkout latest stable version <code>git checkout v1.3</code>
+</li>
+<li>Execute <code>mvn clean install</code> from shell</li>
+</ul>
+
+<p>Currently, projects that use this library are running to <a href="http://hortonworks.com/blog/announcing-hdp-2-2/">Hortonworks Data Platform v2.2</a> (corresponds to Hadoop 2.6 and HBase 0.98). However, if you're using a different version (or even different distribution like <a href="http://www.cloudera.com/">Cloudera</a>), you may change the versions in <a href="./pom.xml">pom.xml</a> to desired ones and build the project.</p>
+
+<p><strong>Please note</strong>: Test cases are very comprehensive - they even spin an <a href="https://github.com/apache/hbase/blob/master/hbase-server/src/test/java/org/apache/hadoop/hbase/HBaseTestingUtility.java">in-memory HBase test cluster</a> to run data access related test cases (near-realworld scenario). So, build times can sometimes be longer.</p>
+
+<h2>
+<a id="releases" class="anchor" href="#releases" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Releases</h2>
+
+<p>The change log can be found in the <a href="../../releases">releases</a> section.</p>
+
+<h2>
+<a id="feature-requests-and-bug-reporting" class="anchor" href="#feature-requests-and-bug-reporting" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Feature requests and bug reporting</h2>
+
+<p>If you intend to request a feature or report a bug, you may use <a href="../../issues">Github Issues for hbase-object-mapper</a>.</p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
+
+<p>Copyright 2016 Flipkart Internet Pvt Ltd.</p>
+
+<p>Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, version 2.0</a> (the "License"). You may not use this product or it's source code except in compliance with the License.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/flipkart-incubator/hbase-object-mapper/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/flipkart-incubator/hbase-object-mapper/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/flipkart-incubator/hbase-object-mapper"></a> is maintained by <a href="https://github.com/flipkart-incubator">flipkart-incubator</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
