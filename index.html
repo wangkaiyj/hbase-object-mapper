@@ -93,7 +93,7 @@
 
 <p>This library enables you to represent rows of <code>citizens</code> HBase table as instances of <code>Citizen</code> class.</p>
 
-<p>See source files <a href="./src/test/java/com/flipkart/hbaseobjectmapper/entities/Citizen.java">Citizen.java</a> and <a href="./src/test/java/com/flipkart/hbaseobjectmapper/entities/Employee.java">Employee.java</a> for detailed examples.</p>
+<p>See source files <a href="https://github.com/flipkart-incubator/hbase-object-mapper/blob/master/src/test/java/com/flipkart/hbaseobjectmapper/entities/Citizen.java">Citizen.java</a> and <a href="https://github.com/flipkart-incubator/hbase-object-mapper/blob/master/src/test/java/com/flipkart/hbaseobjectmapper/entities/Employee.java">Employee.java</a> for detailed examples.</p>
 
 <p>Now, for above definition of your <code>Citizen</code> class,</p>
 
@@ -116,7 +116,7 @@
 
 <div class="highlight highlight-source-java"><pre><span class="pl-smi">Citizen</span> e <span class="pl-k">=</span> hbObjectMapper<span class="pl-k">.</span>readValue(key, value, <span class="pl-smi">Citizen</span><span class="pl-k">.</span>class);</pre></div>
 
-<p>See file <a href="./src/test/java/com/flipkart/hbaseobjectmapper/mr/samples/CitizenMapper.java">CitizenMapper.java</a> for full sample code.</p>
+<p>See file <a href="https://github.com/flipkart-incubator/hbase-object-mapper/blob/master/src/test/java/com/flipkart/hbaseobjectmapper/mr/samples/CitizenMapper.java">CitizenMapper.java</a> for full sample code.</p>
 
 <h3>
 <a id="reducer" class="anchor" href="#reducer" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Reducer</h3>
@@ -132,7 +132,7 @@
 <div class="highlight highlight-source-java"><pre><span class="pl-smi">Citizen</span> citizen <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Citizen</span>(<span class="pl-c">/*details*/</span>);
 context<span class="pl-k">.</span>write(hbObjectMapper<span class="pl-k">.</span>getRowKey(citizen), hbObjectMapper<span class="pl-k">.</span>writeValueAsPut(citizen));</pre></div>
 
-<p>See file <a href="./src/test/java/com/flipkart/hbaseobjectmapper/mr/samples/CitizenReducer.java">CitizenReducer.java</a> for full sample code.</p>
+<p>See file <a href="https://github.com/flipkart-incubator/hbase-object-mapper/blob/master/src/test/java/com/flipkart/hbaseobjectmapper/mr/samples/CitizenReducer.java">CitizenReducer.java</a> for full sample code.</p>
 
 <h3>
 <a id="unit-test-for-mapper" class="anchor" href="#unit-test-for-mapper" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Unit-test for Mapper</h3>
@@ -159,7 +159,7 @@ citizenMapDriver
 )
 .runTest();</pre></div>
 
-<p>See file <a href="./src/test/java/com/flipkart/hbaseobjectmapper/mr/TestCitizenMR.java">TestCitizenMR.java</a> for full sample code.</p>
+<p>See file <a href="https://github.com/flipkart-incubator/hbase-object-mapper/blob/master/src/test/java/com/flipkart/hbaseobjectmapper/mr/TestCitizenMR.java">TestCitizenMR.java</a> for full sample code.</p>
 
 <h3>
 <a id="unit-test-for-reducer" class="anchor" href="#unit-test-for-reducer" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Unit-test for Reducer</h3>
@@ -185,7 +185,7 @@ citizenMapDriver
     <span class="pl-smi">CitizenSummary</span><span class="pl-k">.</span>class
 );</pre></div>
 
-<p>Again, see file <a href="./src/test/java/com/flipkart/hbaseobjectmapper/mr/TestCitizenMR.java">TestCitizenMR.java</a> for full sample code.</p>
+<p>Again, see file <a href="https://github.com/flipkart-incubator/hbase-object-mapper/blob/master/src/test/java/com/flipkart/hbaseobjectmapper/mr/TestCitizenMR.java">TestCitizenMR.java</a> for full sample code.</p>
 
 <h2>
 <a id="hbase-random-access" class="anchor" href="#hbase-random-access" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>HBase Random Access</h2>
@@ -203,7 +203,7 @@ citizenMapDriver
     }
 }</pre></div>
 
-<p>(see <a href="./src/test/java/com/flipkart/hbaseobjectmapper/daos/CitizenDAO.java">CitizenDAO.java</a>)</p>
+<p>(see <a href="https://github.com/flipkart-incubator/hbase-object-mapper/blob/master/src/test/java/com/flipkart/hbaseobjectmapper/daos/CitizenDAO.java">CitizenDAO.java</a>)</p>
 
 <p>Once defined, you can access, manipulate and persist a row of <code>citizens</code> HBase table as below:</p>
 
@@ -237,7 +237,7 @@ citizenDao<span class="pl-k">.</span>delete(<span class="pl-s"><span class="pl-p
 citizenDao<span class="pl-k">.</span>getHBaseTable() <span class="pl-c">// returns HTable instance (in case you want to directly play around) </span>
 </pre></div>
 
-<p>(see <a href="./src/test/java/com/flipkart/hbaseobjectmapper/TestsAbstractHBDAO.java">TestsAbstractHBDAO.java</a> for a more detailed examples)</p>
+<p>(see <a href="https://github.com/flipkart-incubator/hbase-object-mapper/blob/master/src/test/java/com/flipkart/hbaseobjectmapper/TestsAbstractHBDAO.java">TestsAbstractHBDAO.java</a> for a more detailed examples)</p>
 
 <p><strong>Please note:</strong> Since we're dealing with HBase (and not an OLTP data store), fitting a classical ORM paradigm may not make sense. So this library doesn't intend to evolve as a full-fledged ORM. However, if you do intend to use HBase via ORM, I suggest you use <a href="https://phoenix.apache.org/">Apache Phoenix</a>. </p>
 
@@ -280,19 +280,19 @@ citizenDao<span class="pl-k">.</span>getHBaseTable() <span class="pl-c">// retur
 <li>Execute <code>mvn clean install</code> from shell</li>
 </ul>
 
-<p>Currently, projects that use this library are running on <a href="http://hortonworks.com/blog/announcing-hdp-2-2/">Hortonworks Data Platform v2.2</a> (corresponds to Hadoop 2.6 and HBase 0.98). However, if you're using a different distribution of Hadoop (like <a href="http://www.cloudera.com/">Cloudera</a>) or if you are using a different version of Hadoop, you may change the versions in <a href="./pom.xml">pom.xml</a> to desired ones and build the project.</p>
+<p>Currently, projects that use this library are running on <a href="http://hortonworks.com/blog/announcing-hdp-2-2/">Hortonworks Data Platform v2.2</a> (corresponds to Hadoop 2.6 and HBase 0.98). However, if you're using a different distribution of Hadoop (like <a href="http://www.cloudera.com/">Cloudera</a>) or if you are using a different version of Hadoop, you may change the versions in <a href="https://github.com/flipkart-incubator/hbase-object-mapper/blob/master/pom.xml">pom.xml</a> to desired ones and build the project.</p>
 
 <p><strong>Please note</strong>: Test cases are very comprehensive - they even spin an <a href="https://github.com/apache/hbase/blob/master/hbase-server/src/test/java/org/apache/hadoop/hbase/HBaseTestingUtility.java">in-memory HBase test cluster</a> to run data access related test cases (near-realworld scenario). So, build times can sometimes be longer.</p>
 
 <h2>
 <a id="releases" class="anchor" href="#releases" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Releases</h2>
 
-<p>The change log can be found in the <a href="../../releases">releases</a> section.</p>
+<p>The change log can be found in the <a href="https://github.com/flipkart-incubator/hbase-object-mapper/releases">releases</a> section.</p>
 
 <h2>
 <a id="feature-requests-and-bug-reporting" class="anchor" href="#feature-requests-and-bug-reporting" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Feature requests and bug reporting</h2>
 
-<p>If you intend to request a feature or report a bug, you may use <a href="../../issues">Github Issues for hbase-object-mapper</a>.</p>
+<p>If you intend to request a feature or report a bug, you may use <a href="https://github.com/flipkart-incubator/hbase-object-mapper/issues">Github Issues for hbase-object-mapper</a>.</p>
 
 <h2>
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
