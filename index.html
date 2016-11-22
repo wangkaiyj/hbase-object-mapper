@@ -271,7 +271,7 @@ citizenDao<span class="pl-k">.</span>getHBaseTable() <span class="pl-c">// retur
 <li>Execute <code>mvn clean install</code> from shell</li>
 </ul>
 
-<p>Currently, projects that use this library are running on <a href="http://hortonworks.com/blog/announcing-hdp-2-2/">Hortonworks Data Platform v2.2</a> (corresponds to Hadoop 2.6 and HBase 0.98). However, if you're using a different distribution of Hadoop (like <a href="http://www.cloudera.com/">Cloudera</a>) or if you are using a different version of Hadoop, you may change the versions in <a href="./pom.xml">pom.xml</a> to desired ones and build the project.</p>
+<p>Currently, projects that use this library are running on <a href="http://hortonworks.com/blog/announcing-hdp-2-2/">Hortonworks Data Platform v2.2</a> (corresponds to Hadoop 2.6 and HBase 0.98). However, if you're using a different distribution of Hadoop (like <a href="http://www.cloudera.com/">Cloudera</a>) or if you are using a different version of Hadoop, you may change the versions in <a href="https://github.com/flipkart-incubator/hbase-object-mapper/blob/master/pom.xml">pom.xml</a> to desired ones and build the project.</p>
 
 <p><strong>Please note</strong>: Test cases are very comprehensive - they even spin an <a href="https://github.com/apache/hbase/blob/master/hbase-server/src/test/java/org/apache/hadoop/hbase/HBaseTestingUtility.java">in-memory HBase test cluster</a> to run data access related test cases (near-realworld scenario). So, build times can sometimes be longer.</p>
 
